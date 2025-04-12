@@ -20,8 +20,8 @@ mydb.delete()
 
 
 
-# with open("CompilerDesign/test.py", "r") as file:
-#     code = file.read()
+with open("test.py", "r") as file:
+    code = file.read()
 
 tree = ast.parse(code)
 

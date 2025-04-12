@@ -5,8 +5,10 @@ users.insert_many({"key1": "value1"}, {"key2": "value2"})
 
 
 for obj in users:
-    if obj.age >18 and obj.age<30 or obj.age==25:
+    if age >18 and age<30 or age!=25:
         print(obj)
-
-users.delete()
+   
+users.delete_entry(["age>18 and age<30 or age==25"])
+users.update_entry({"key": "age > 30","key2":5}, {"key2": "new_value"})
+users.delete_table()
 mydb.delete()
