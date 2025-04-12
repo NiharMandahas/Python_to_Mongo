@@ -66,10 +66,47 @@
             "object": "users"
         },
         {
+            "args": [
+                "['age>18 and age<30 or age==25']"
+            ],
+            "kwargs": {},
+            "conditions": {
+                "op": "or",
+                "values": [
+                    {
+                        "op": "and",
+                        "values": [
+                            "age > 18",
+                            "age < 30"
+                        ]
+                    },
+                    "age == 25"
+                ]
+            },
+            "type": "method_call",
+            "method": "delete_entry",
+            "object": "users"
+        },
+        {
+            "args": [
+                {
+                    "key": "age > 30",
+                    "key2": 5
+                },
+                {
+                    "key2": "new_value"
+                }
+            ],
+            "kwargs": {},
+            "type": "method_call",
+            "method": "update_entry",
+            "object": "users"
+        },
+        {
             "args": [],
             "kwargs": {},
             "type": "method_call",
-            "method": "delete",
+            "method": "delete_table",
             "object": "users"
         },
         {
@@ -86,18 +123,18 @@
             "target": "obj",
             "iterable": "users",
             "if_is_present": true,
-            "condition_raw": "obj.age > 18 and obj.age < 30 or obj.age == 25",
+            "condition_raw": "age > 18 and age < 30 or age != 25",
             "conditions": {
                 "op": "or",
                 "values": [
                     {
                         "op": "and",
                         "values": [
-                            "obj.age > 18",
-                            "obj.age < 30"
+                            "age > 18",
+                            "age < 30"
                         ]
                     },
-                    "obj.age == 25"
+                    "age != 25"
                 ]
             },
             "body_size": 1

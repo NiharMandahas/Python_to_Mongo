@@ -9,19 +9,19 @@ users.insert_many({"key1": "value1"}, {"key2": "value2"})
 
 
 for obj in users:
-    if obj.age >18 and obj.age<30 or obj.age==25:
+    if age >18 and age<30 or age!=25:
         print(obj)
-
-        
-
-users.delete()
+   
+users.delete_entry(["age>18 and age<30 or age==25"])
+users.update_entry({"key": "age > 30","key2":5}, {"key2": "new_value"})
+users.delete_table()
 mydb.delete()
 '''
 
 
 
-with open("CompilerDesign/test.py", "r") as file:
-    code = file.read()
+# with open("CompilerDesign/test.py", "r") as file:
+#     code = file.read()
 
 tree = ast.parse(code)
 
@@ -70,6 +70,35 @@ class CallVisitor(BaseVisitor):
         self.function_calls = []
         self.method_calls = []
 
+    def extract_condition_structure(self,expr):
+        if isinstance(expr, ast.BoolOp):
+            op_type = type(expr.op)
+            if op_type == ast.And:
+                op_str = "and"
+            elif op_type == ast.Or:
+                op_str = "or"
+            else:
+                op_str = "unknown"
+
+            return {
+                "op": op_str,
+                "values": [self.extract_condition_structure(value) for value in expr.values]
+            }
+
+        elif isinstance(expr, ast.UnaryOp):
+            # Handle `not <expr>`
+            if isinstance(expr.op, ast.Not):
+                return {
+                    "op": "not",
+                    "value": self.extract_condition_structure(expr.operand)
+                }
+
+        elif isinstance(expr, ast.Compare):
+            return ast.unparse(expr)
+
+        else:
+            return ast.unparse(expr)  # Fallback for any unknown cases
+
     def visit_Call(self, node):
         call_info = {
             "args": [],
@@ -103,10 +132,31 @@ class CallVisitor(BaseVisitor):
             self.function_calls.append(call_info)
 
         elif isinstance(node.func, ast.Attribute):
+            expr_str = None
+
+            if len(node.args) > 0:
+                first_arg = node.args[0]
+
+                if isinstance(first_arg, ast.Constant) and isinstance(first_arg.value, str):
+                    expr_str = first_arg.value
+
+                elif isinstance(first_arg, ast.List) and len(first_arg.elts) > 0:
+                    first_elt = first_arg.elts[0]
+                    if isinstance(first_elt, ast.Constant) and isinstance(first_elt.value, str):
+                        expr_str = first_elt.value
+
+            if expr_str:
+                try:
+                    parsed_expr = ast.parse(expr_str, mode='eval').body
+                    call_info["conditions"] = self.extract_condition_structure(parsed_expr)
+                except Exception as e:
+                    call_info["condition_parse_error"] = str(e)
+
             call_info["type"] = "method_call"
             call_info["method"] = node.func.attr
             call_info["object"] = ast.unparse(node.func.value)
             self.method_calls.append(call_info)
+
 
         self.generic_visit(node)
 
@@ -147,6 +197,7 @@ class LoopVisitor(BaseVisitor):
 
         else:
             return ast.unparse(expr)  # Fallback for any unknown cases
+        
     def visit_For(self, node):
 
         if_is_present = (
@@ -217,5 +268,5 @@ print(ast.dump(tree, indent=6))
 visitor = MainVisitor()
 results = visitor.visit(tree)
 
-with open("CompilerDesign/results.json", "w") as f:
+with open("results.json", "w") as f:
     json.dump(results, f, indent=4)
