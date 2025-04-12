@@ -1,5 +1,6 @@
 import ast
 import json
+from conditions_parser import convert_to_mongo_query
 
 code = '''
 mydb = create_db("myDB")
@@ -9,7 +10,7 @@ users.insert_many({"key1": "value1"}, {"key2": "value2"})
 
 
 for obj in users:
-    if age >18 and age<30 or age!=25:
+    if age >18 and age<30 or age!=25 or name=="Nihar":
         print(obj)
    
 users.delete_entry(["age>18 and age<30 or age==25"])
@@ -20,8 +21,8 @@ mydb.delete()
 
 
 
-with open("test.py", "r") as file:
-    code = file.read()
+# with open("test.py", "r") as file:
+#     code = file.read()
 
 tree = ast.parse(code)
 
@@ -148,7 +149,7 @@ class CallVisitor(BaseVisitor):
             if expr_str:
                 try:
                     parsed_expr = ast.parse(expr_str, mode='eval').body
-                    call_info["conditions"] = self.extract_condition_structure(parsed_expr)
+                    call_info["conditions"] = convert_to_mongo_query(self.extract_condition_structure(parsed_expr))
                 except Exception as e:
                     call_info["condition_parse_error"] = str(e)
 
@@ -218,7 +219,7 @@ class LoopVisitor(BaseVisitor):
             "iterable": ast.unparse(node.iter),
             "if_is_present": if_is_present,
             "condition_raw": ast.unparse(condition_expr) if condition_expr else None,
-            "conditions": self.extract_condition_structure(condition_expr) if condition_expr else None,
+            "conditions": convert_to_mongo_query(self.extract_condition_structure(condition_expr) if condition_expr else None),
             "body_size": len(node.body)
         }
 

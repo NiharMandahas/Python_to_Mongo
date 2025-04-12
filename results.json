@@ -71,16 +71,24 @@
             ],
             "kwargs": {},
             "conditions": {
-                "op": "or",
-                "values": [
+                "$or": [
                     {
-                        "op": "and",
-                        "values": [
-                            "age > 18",
-                            "age < 30"
+                        "$and": [
+                            {
+                                "age": {
+                                    "$gt": 18
+                                }
+                            },
+                            {
+                                "age": {
+                                    "$lt": 30
+                                }
+                            }
                         ]
                     },
-                    "age == 25"
+                    {
+                        "age": 25
+                    }
                 ]
             },
             "type": "method_call",
@@ -123,18 +131,31 @@
             "target": "obj",
             "iterable": "users",
             "if_is_present": true,
-            "condition_raw": "age > 18 and age < 30 or age != 25",
+            "condition_raw": "age > 18 and age < 30 or age != 25 or name == 'Nihar'",
             "conditions": {
-                "op": "or",
-                "values": [
+                "$or": [
                     {
-                        "op": "and",
-                        "values": [
-                            "age > 18",
-                            "age < 30"
+                        "$and": [
+                            {
+                                "age": {
+                                    "$gt": 18
+                                }
+                            },
+                            {
+                                "age": {
+                                    "$lt": 30
+                                }
+                            }
                         ]
                     },
-                    "age != 25"
+                    {
+                        "age": {
+                            "$ne": 25
+                        }
+                    },
+                    {
+                        "name": "Nihar"
+                    }
                 ]
             },
             "body_size": 1
