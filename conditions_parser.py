@@ -50,19 +50,6 @@ def convert_to_mongo_query(condition):
 
     
 
-# with open('results.json', 'r') as file:
-#     conditions = json.load(file)
-#     for method_call in conditions["method_calls"]:
-#         if "conditions" in method_call:
-#             formatted_condition = convert_to_mongo_query(method_call["conditions"])
-#             print(formatted_condition)
-        
-#     for functions_call in conditions["loops"]:
-#         if "conditions" in functions_call:
-#             formatted_condition = convert_to_mongo_query(functions_call["conditions"])
-#             print(formatted_condition)
-
-
 
 
 

@@ -52,12 +52,7 @@
         },
         {
             "args": [
-                {
-                    "key1": "value1"
-                },
-                {
-                    "key2": "value2"
-                }
+                "[{'key1': 'value1'}, {'key2': 'value2'}]"
             ],
             "kwargs": {},
             "type": "method_call",
@@ -66,7 +61,7 @@
         },
         {
             "args": [
-                "['age>18 and age<30 or age==25']"
+                "['age>18 and age<30 or age!=25']"
             ],
             "kwargs": {},
             "conditions": {
@@ -86,12 +81,53 @@
                         ]
                     },
                     {
-                        "age": 25
+                        "age": {
+                            "$ne": 25
+                        }
                     }
                 ]
             },
             "type": "method_call",
-            "method": "delete_entry",
+            "method": "delete_one",
+            "object": "users"
+        },
+        {
+            "args": [
+                "[\"age>18 and age<30 or age!=25 and something=='nihar'\"]"
+            ],
+            "kwargs": {},
+            "conditions": {
+                "$or": [
+                    {
+                        "$and": [
+                            {
+                                "age": {
+                                    "$gt": 18
+                                }
+                            },
+                            {
+                                "age": {
+                                    "$lt": 30
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "$and": [
+                            {
+                                "age": {
+                                    "$ne": 25
+                                }
+                            },
+                            {
+                                "something": "nihar"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "type": "method_call",
+            "method": "delete_all",
             "object": "users"
         },
         {
@@ -120,6 +156,33 @@
             },
             "type": "method_call",
             "method": "update_one",
+            "object": "users"
+        },
+        {
+            "args": [
+                "['age > 30 and key2==5']",
+                "['something = 100']"
+            ],
+            "kwargs": {},
+            "conditions": {
+                "$and": [
+                    {
+                        "age": {
+                            "$gt": 30
+                        }
+                    },
+                    {
+                        "key2": 5
+                    }
+                ]
+            },
+            "set_statement": {
+                "$set": {
+                    "something": 100
+                }
+            },
+            "type": "method_call",
+            "method": "update_all",
             "object": "users"
         },
         {

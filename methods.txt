@@ -1,13 +1,47 @@
-create DB               done
-create table            done   
-delete table            done
-delete db               done
+PyMongo Language
 
-insert_one              done
-insert_many             done
+1. Python like code
+2. Syntax checker for this python like code
+3. Parser.py using ast to get tree and then JSON with the help of conditions_parser.py
+4. Code generation using code_gen.py
+5. Ready mongo code
 
-update
 
-delete
 
-find                    done
+Python Like Code (Syntax Analyzer)-
+
+#Yet to be done
+
+
+Parser(JSON)- 
+
+Almost complete, nothing is pending.
+
+
+Code generation-
+    Basic-
+
+    1. create DB               done
+    2. create table            done   
+    3. delete table            done
+    4. delete db               done
+
+    5. insert_one              done
+    6. insert_many             done
+
+    7. update_one              done
+    8. update_all              done
+
+    9. delete_one              done
+    10. delete_all              done    
+
+    11. find                    done
+
+
+    Additional-
+
+    #Pending
+
+    12. sort() with find()
+    13. limit() with find()
+    14. sort() with limit() with find()
