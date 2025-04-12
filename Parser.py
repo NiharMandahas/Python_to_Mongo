@@ -1,0 +1,221 @@
+import ast
+import json
+
+code = '''
+mydb = create_db("myDB")
+users = create_table("myTable", mydb)
+users.insert_one({"key": "value","age":324})
+users.insert_many({"key1": "value1"}, {"key2": "value2"})
+
+
+for obj in users:
+    if obj.age >18 and obj.age<30 or obj.age==25:
+        print(obj)
+
+        
+
+users.delete()
+mydb.delete()
+'''
+
+
+
+with open("CompilerDesign/test.py", "r") as file:
+    code = file.read()
+
+tree = ast.parse(code)
+
+
+# Base visitor class
+class BaseVisitor(ast.NodeVisitor):
+    def __init__(self):
+        self.results = []
+    
+    def get_results(self):
+        return self.results
+
+# Assignment visitor
+class AssignmentVisitor(BaseVisitor):
+    def visit_Assign(self, node):
+        for target in node.targets:
+            if isinstance(target, ast.Name):
+                assignment_info = {"target": target.id}
+                
+                # Handle assignment value
+                if isinstance(node.value, ast.Call):
+                    if isinstance(node.value.func, ast.Name):
+                        assignment_info["type"] = "function_call"
+                        assignment_info["function"] = node.value.func.id
+                    elif isinstance(node.value.func, ast.Attribute):
+                        assignment_info["type"] = "method_call"
+                        assignment_info["method"] = node.value.func.attr
+                elif isinstance(node.value, ast.Name):
+                    assignment_info["type"] = "variable"
+                    assignment_info["source"] = node.value.id
+                elif isinstance(node.value, ast.Constant):
+                    assignment_info["type"] = "constant"
+                    assignment_info["value"] = node.value.value
+                
+                self.results.append(assignment_info)
+        
+        self.generic_visit(node)
+
+
+
+
+# Function/Method call visitor
+class CallVisitor(BaseVisitor):
+    def __init__(self):
+        super().__init__()
+        self.function_calls = []
+        self.method_calls = []
+
+    def visit_Call(self, node):
+        call_info = {
+            "args": [],
+            "kwargs": {}
+        }
+
+        for arg in node.args:
+            if isinstance(arg, ast.Constant):
+                call_info["args"].append(arg.value)
+            elif isinstance(arg, ast.Dict):
+                call_info["args"].append(ast.literal_eval(arg))
+            elif isinstance(arg, ast.Name):
+                call_info["args"].append(arg.id)
+            else:
+                call_info["args"].append(ast.unparse(arg))
+
+        for keyword in node.keywords:
+            key = keyword.arg
+            val = keyword.value
+            if isinstance(val, ast.Constant):
+                call_info["kwargs"][key] = val.value
+            elif isinstance(val, ast.Name):
+                call_info["kwargs"][key] = val.id
+            else:
+                call_info["kwargs"][key] = ast.unparse(val)
+
+        # Separate logic for functions vs methods
+        if isinstance(node.func, ast.Name):
+            call_info["type"] = "function_call"
+            call_info["name"] = node.func.id
+            self.function_calls.append(call_info)
+
+        elif isinstance(node.func, ast.Attribute):
+            call_info["type"] = "method_call"
+            call_info["method"] = node.func.attr
+            call_info["object"] = ast.unparse(node.func.value)
+            self.method_calls.append(call_info)
+
+        self.generic_visit(node)
+
+    def get_results(self):
+        return {
+            "function_calls": self.function_calls,
+            "method_calls": self.method_calls
+        }
+
+
+# Loop visitor
+class LoopVisitor(BaseVisitor):
+    def extract_condition_structure(self,expr):
+        if isinstance(expr, ast.BoolOp):
+            op_type = type(expr.op)
+            if op_type == ast.And:
+                op_str = "and"
+            elif op_type == ast.Or:
+                op_str = "or"
+            else:
+                op_str = "unknown"
+
+            return {
+                "op": op_str,
+                "values": [self.extract_condition_structure(value) for value in expr.values]
+            }
+
+        elif isinstance(expr, ast.UnaryOp):
+            # Handle `not <expr>`
+            if isinstance(expr.op, ast.Not):
+                return {
+                    "op": "not",
+                    "value": self.extract_condition_structure(expr.operand)
+                }
+
+        elif isinstance(expr, ast.Compare):
+            return ast.unparse(expr)
+
+        else:
+            return ast.unparse(expr)  # Fallback for any unknown cases
+    def visit_For(self, node):
+
+        if_is_present = (
+            isinstance(node.body[0], ast.If)
+        )
+
+        # condition_expr = node.body[0].test if if_is_present else None
+
+        condition_expr = (
+            node.body[0].test
+            if node.body and isinstance(node.body[0], ast.If)
+            else None
+        )
+
+        loop_info = {
+            "type": "for_loop",
+            "target": ast.unparse(node.target),
+            "iterable": ast.unparse(node.iter),
+            "if_is_present": if_is_present,
+            "condition_raw": ast.unparse(condition_expr) if condition_expr else None,
+            "conditions": self.extract_condition_structure(condition_expr) if condition_expr else None,
+            "body_size": len(node.body)
+        }
+
+
+        self.results.append(loop_info)
+        self.generic_visit(node)
+
+    
+    def visit_While(self, node):
+        loop_info = {
+            "type": "while_loop",
+            "body_size": len(node.body)
+        }
+        self.results.append(loop_info)
+        self.generic_visit(node)
+
+
+
+# Main visitor that uses the specialized visitors
+class MainVisitor:
+    def __init__(self):
+        self.assignment_visitor = AssignmentVisitor()
+        self.call_visitor = CallVisitor()
+        self.loop_visitor = LoopVisitor()
+    
+    def visit(self, tree):
+        self.assignment_visitor.visit(tree)
+        self.call_visitor.visit(tree)
+        self.loop_visitor.visit(tree)
+        
+        assignment = self.assignment_visitor.get_results()
+        calls = self.call_visitor.get_results()  # Now a dict
+        loops = self.loop_visitor.get_results()
+        
+        return {
+            "assignments": assignment,
+            "function_calls": calls["function_calls"],
+            "method_calls": calls["method_calls"],
+            "loops": loops
+        }
+
+
+# Print the AST for reference
+print(ast.dump(tree, indent=6))
+
+# Use the visitors
+visitor = MainVisitor()
+results = visitor.visit(tree)
+
+with open("CompilerDesign/results.json", "w") as f:
+    json.dump(results, f, indent=4)

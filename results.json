@@ -1,0 +1,106 @@
+{
+    "assignments": [
+        {
+            "target": "mydb",
+            "type": "function_call",
+            "function": "create_db"
+        },
+        {
+            "target": "users",
+            "type": "function_call",
+            "function": "create_table"
+        }
+    ],
+    "function_calls": [
+        {
+            "args": [
+                "myDB"
+            ],
+            "kwargs": {},
+            "type": "function_call",
+            "name": "create_db"
+        },
+        {
+            "args": [
+                "myTable",
+                "mydb"
+            ],
+            "kwargs": {},
+            "type": "function_call",
+            "name": "create_table"
+        },
+        {
+            "args": [
+                "obj"
+            ],
+            "kwargs": {},
+            "type": "function_call",
+            "name": "print"
+        }
+    ],
+    "method_calls": [
+        {
+            "args": [
+                {
+                    "key": "value",
+                    "age": 324
+                }
+            ],
+            "kwargs": {},
+            "type": "method_call",
+            "method": "insert_one",
+            "object": "users"
+        },
+        {
+            "args": [
+                {
+                    "key1": "value1"
+                },
+                {
+                    "key2": "value2"
+                }
+            ],
+            "kwargs": {},
+            "type": "method_call",
+            "method": "insert_many",
+            "object": "users"
+        },
+        {
+            "args": [],
+            "kwargs": {},
+            "type": "method_call",
+            "method": "delete",
+            "object": "users"
+        },
+        {
+            "args": [],
+            "kwargs": {},
+            "type": "method_call",
+            "method": "delete",
+            "object": "mydb"
+        }
+    ],
+    "loops": [
+        {
+            "type": "for_loop",
+            "target": "obj",
+            "iterable": "users",
+            "if_is_present": true,
+            "condition_raw": "obj.age > 18 and obj.age < 30 or obj.age == 25",
+            "conditions": {
+                "op": "or",
+                "values": [
+                    {
+                        "op": "and",
+                        "values": [
+                            "obj.age > 18",
+                            "obj.age < 30"
+                        ]
+                    },
+                    "obj.age == 25"
+                ]
+            },
+            "body_size": 1
+        }
+    ]
+}
