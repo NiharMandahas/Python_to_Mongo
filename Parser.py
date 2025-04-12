@@ -4,13 +4,13 @@ from conditions_parser import convert_to_mongo_query
 
 code = '''
 mydb = create_db("myDB")
-users = create_table("myTable", mydb)
+users = create_table(mydb)
 users.insert_one({"key": "value","age":324})
 users.insert_many({"key1": "value1"}, {"key2": "value2"})
 
 
 for obj in users:
-    if age >18 and age<30 or age!=25 or name=="Nihar":
+    if obj["Rating"]> 4.5 or obj["Rating"]==5:
         print(obj)
    
 users.delete_entry(["age>18 and age<30 or age==25"])

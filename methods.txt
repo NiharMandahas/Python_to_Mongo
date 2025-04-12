@@ -1,12 +1,13 @@
-create DB
-create table
-delete table
+create DB               done
+create table            done   
+delete table            done
+delete db               done
 
-insert_one
-insert_many
+insert_one              done
+insert_many             done
 
 update
 
 delete
 
-find
+find                    done

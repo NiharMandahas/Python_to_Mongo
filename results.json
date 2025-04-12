@@ -22,7 +22,6 @@
         },
         {
             "args": [
-                "myTable",
                 "mydb"
             ],
             "kwargs": {},
@@ -131,30 +130,16 @@
             "target": "obj",
             "iterable": "users",
             "if_is_present": true,
-            "condition_raw": "age > 18 and age < 30 or age != 25 or name == 'Nihar'",
+            "condition_raw": "obj['Rating'] > 4.5 or obj['Rating'] == 5",
             "conditions": {
                 "$or": [
                     {
-                        "$and": [
-                            {
-                                "age": {
-                                    "$gt": 18
-                                }
-                            },
-                            {
-                                "age": {
-                                    "$lt": 30
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "age": {
-                            "$ne": 25
+                        "obj['Rating']": {
+                            "$gt": "4.5"
                         }
                     },
                     {
-                        "name": "Nihar"
+                        "obj['Rating']": 5
                     }
                 ]
             },
