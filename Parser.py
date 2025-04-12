@@ -1,6 +1,7 @@
 import ast
 import json
-from conditions_parser import convert_to_mongo_query
+from conditions_parser import convert_to_mongo_query, parse_set_statement
+
 
 code = '''
 mydb = create_db("myDB")
@@ -14,7 +15,7 @@ for obj in users:
         print(obj)
    
 users.delete_entry(["age>18 and age<30 or age==25"])
-users.update_entry({"key": "age > 30","key2":5}, {"key2": "new_value"})
+users.update_one(["age > 30 and key2==5"],["something = 100 , something_else='nihar' "])
 users.delete_table()
 mydb.delete()
 '''
@@ -134,9 +135,10 @@ class CallVisitor(BaseVisitor):
 
         elif isinstance(node.func, ast.Attribute):
             expr_str = None
-
+            set_statement= None
             if len(node.args) > 0:
                 first_arg = node.args[0]
+                second_arg=node.args[1] if len(node.args) > 1 else None
 
                 if isinstance(first_arg, ast.Constant) and isinstance(first_arg.value, str):
                     expr_str = first_arg.value
@@ -145,6 +147,12 @@ class CallVisitor(BaseVisitor):
                     first_elt = first_arg.elts[0]
                     if isinstance(first_elt, ast.Constant) and isinstance(first_elt.value, str):
                         expr_str = first_elt.value
+                
+                if isinstance(second_arg,ast.List) and len(second_arg.elts) > 0:
+                    second_elt = second_arg.elts[0]
+                    if isinstance(second_elt, ast.Constant) and isinstance(second_elt.value, str):
+                        set_statement = second_elt.value
+                
 
             if expr_str:
                 try:
@@ -152,6 +160,14 @@ class CallVisitor(BaseVisitor):
                     call_info["conditions"] = convert_to_mongo_query(self.extract_condition_structure(parsed_expr))
                 except Exception as e:
                     call_info["condition_parse_error"] = str(e)
+            
+            # print(set_statement)
+            if set_statement:
+                try:
+                    parsed_set_statement = parse_set_statement(set_statement)
+                    call_info["set_statement"] = parsed_set_statement
+                except Exception as e:
+                    call_info["set_statement_parse_error"] = str(e)
 
             call_info["type"] = "method_call"
             call_info["method"] = node.func.attr

@@ -62,3 +62,35 @@ def convert_to_mongo_query(condition):
 #             formatted_condition = convert_to_mongo_query(functions_call["conditions"])
 #             print(formatted_condition)
 
+
+
+
+
+def parse_set_statement(set_str):
+    set_dict = {}
+    try:
+        # Split by comma to get each assignment
+        assignments = set_str.split(',')
+        for assign in assignments:
+            if '=' in assign:
+                key, value = assign.split('=', 1)
+                key = key.strip()
+                value = value.strip()
+
+                # Try to parse int, float, or strip quotes for strings
+                if value.isdigit():
+                    value = int(value)
+                else:
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        if value.startswith(("'", '"')) and value.endswith(("'", '"')):
+                            value = value[1:-1]
+                        else:
+                            pass  # Keep it as-is if it's something unknown
+
+                set_dict[key] = value
+    except Exception as e:
+        print("Error parsing set statement:", e)
+    
+    return {"$set": set_dict}

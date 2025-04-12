@@ -32,6 +32,11 @@ class CodeGenerator:
             elif method["method"] == "insert_many":
                 elements = ", ".join([str(item) for item in method["args"]])
                 self.code += f"db.{method['object']}.insertMany([{elements}])\n"
+    
+    def generate_update_code(self):
+        for method in self.parsed_text["method_calls"]:
+            if method["method"] == "update_one":
+                self.code+=f"db.{method["object"]}.updateOne({method["conditions"]}, {method["set_statement"]})\n"
 
     def generate_query_code(self):
         for loop in self.parsed_text["loops"]:
@@ -45,6 +50,7 @@ class CodeGenerator:
 obj= CodeGenerator()
 obj.generate_assignment_code()
 obj.generate_insert_code()
+obj.generate_update_code()
 obj.generate_query_code()
 obj.generate_drop_code()
 obj.show_code()

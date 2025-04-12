@@ -96,17 +96,30 @@
         },
         {
             "args": [
-                {
-                    "key": "age > 30",
-                    "key2": 5
-                },
-                {
-                    "key2": "new_value"
-                }
+                "['age > 30 and key2==5']",
+                "[\"something = 100 , something_else='nihar' \"]"
             ],
             "kwargs": {},
+            "conditions": {
+                "$and": [
+                    {
+                        "age": {
+                            "$gt": 30
+                        }
+                    },
+                    {
+                        "key2": 5
+                    }
+                ]
+            },
+            "set_statement": {
+                "$set": {
+                    "something": 100,
+                    "something_else": "nihar"
+                }
+            },
             "type": "method_call",
-            "method": "update_entry",
+            "method": "update_one",
             "object": "users"
         },
         {
