@@ -47,6 +47,8 @@ class CodeGenerator:
             elif method["method"] == "delete_all":
                 self.code+=f"db.{method["object"]}.deleteMany({method["conditions"]})\n"
 
+
+
     def generate_query_code(self):
         for loop in self.parsed_text["loops"]:
             if loop["type"] == "for_loop":

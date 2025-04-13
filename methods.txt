@@ -4,7 +4,7 @@ PyMongo Language
 2. Syntax checker for this python like code
 3. Parser.py using ast to get tree and then JSON with the help of conditions_parser.py
 4. Code generation using code_gen.py
-5. Ready mongo code
+5. Ready Mongo Code in a file that can be run in mongosh
 
 
 

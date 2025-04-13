@@ -1,0 +1,9 @@
+db.createCollection("name_me");
+db.name_me.insertOne({"name":"Alice"});
+db.name_me.insertMany([{"name":"AA"},{"seomthign":"sfiqnf"}]);
+
+printjson(db.name_me.find().toArray());
+
+db.name_me.deleteMany({"name":"AA"});
+
+printjson(db.name_me.find().toArray());

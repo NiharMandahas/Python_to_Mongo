@@ -14,8 +14,7 @@ for obj in users:
     if obj["Rating"]> 4.5 or obj["Rating"]==5:
         print(obj)
    
-users.delete_one(["age>18 and age<30 or age!=25"])
-
+table.delete_one([{'name':'nihar','age':20, 'city':'Bengaluru'}])
 users.delete_all(["age>18 and age<30 or age!=25 and something=='nihar'"])
 
 users.update_one(["age > 30 and key2==5"],["something = 100 , something_else='nihar' "])
@@ -153,6 +152,10 @@ class CallVisitor(BaseVisitor):
                     first_elt = first_arg.elts[0]
                     if isinstance(first_elt, ast.Constant) and isinstance(first_elt.value, str):
                         expr_str = first_elt.value
+                    elif isinstance(first_elt, ast.Dict):
+                        # Handle dictionary condition
+                        dict_str = ast.unparse(first_elt)
+                        call_info["conditions"] = dict_str
                 
                 if isinstance(second_arg,ast.List) and len(second_arg.elts) > 0:
                     second_elt = second_arg.elts[0]
