@@ -68,7 +68,46 @@
             "conditions": "{'name': 'nihar', 'age': 20, 'city': 'Bengaluru'}",
             "type": "method_call",
             "method": "delete_one",
-            "object": "table"
+            "object": "users"
+        },
+        {
+            "args": [
+                "['age>18 and age<30 or age!=25 and something==\"nihar\"']"
+            ],
+            "kwargs": {},
+            "conditions": {
+                "$or": [
+                    {
+                        "$and": [
+                            {
+                                "age": {
+                                    "$gt": 18
+                                }
+                            },
+                            {
+                                "age": {
+                                    "$lt": 30
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "$and": [
+                            {
+                                "age": {
+                                    "$ne": 25
+                                }
+                            },
+                            {
+                                "something": "nihar"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "type": "method_call",
+            "method": "delete_one",
+            "object": "users"
         },
         {
             "args": [
