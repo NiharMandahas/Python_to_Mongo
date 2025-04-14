@@ -30,7 +30,7 @@
         },
         {
             "args": [
-                "obj"
+                "i"
             ],
             "kwargs": {},
             "type": "function_call",
@@ -221,19 +221,19 @@
     "loops": [
         {
             "type": "for_loop",
-            "target": "obj",
+            "target": "i",
             "iterable": "users",
             "if_is_present": true,
-            "condition_raw": "obj['Rating'] > 4.5 or obj['Rating'] == 5",
+            "condition_raw": "i['Rating'] > 4.5 or i['Rating'] == 5",
             "conditions": {
                 "$or": [
                     {
-                        "obj['Rating']": {
-                            "$gt": "4.5"
+                        "rating": {
+                            "$gt": 4.5
                         }
                     },
                     {
-                        "obj['Rating']": 5
+                        "rating": 5
                     }
                 ]
             },

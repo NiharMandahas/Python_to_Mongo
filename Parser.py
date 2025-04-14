@@ -1,5 +1,6 @@
 import ast
 import json
+import re
 from conditions_parser import convert_to_mongo_query, parse_set_statement
 
 
@@ -10,9 +11,9 @@ users.insert_one({"key": "value","age":324})
 users.insert_many([{"key1": "value1"}, {"key2": "value2"}])
 
 
-for obj in users:
-    if obj["Rating"]> 4.5 or obj["Rating"]==5:
-        print(obj)
+for i in users:
+    if i["Rating"]> 4.5 or i["Rating"]==5:
+        print(i)
    
 users.delete_one([{'name':'nihar','age':20, 'city':'Bengaluru'}])
 users.delete_one(['age>18 and age<30 or age!=25 and something=="nihar"'])
@@ -167,7 +168,8 @@ class CallVisitor(BaseVisitor):
             if expr_str:
                 try:
                     parsed_expr = ast.parse(expr_str, mode='eval').body
-                    call_info["conditions"] = convert_to_mongo_query(self.extract_condition_structure(parsed_expr))
+                    temp=self.extract_condition_structure(parsed_expr)
+                    call_info["conditions"] = convert_to_mongo_query(temp)
                 except Exception as e:
                     call_info["condition_parse_error"] = str(e)
             
@@ -225,33 +227,58 @@ class LoopVisitor(BaseVisitor):
         else:
             return ast.unparse(expr)  # Fallback for any unknown cases
         
-    def visit_For(self, node):
+    def clean_condition_string(self, condition_str, iterator_var):
+        """Clean condition string by removing iterator variable references."""
+        if not condition_str or not iterator_var:
+            return None
+        
+        # First replace all instances of obj['Rating'] with just Rating
+        pattern = rf"{re.escape(iterator_var)}\['([^']+)'\]"
+        cleaned = re.sub(pattern, r"\1", condition_str)
+        
+        # Remove spaces around operators
+        operators = [">", "<", ">=", "<=", "==", "!="]
+        for op in operators:
+            cleaned = cleaned.replace(f" {op} ", op)
+        
+        # Format as ['condition']
+        return f"['%s']" % cleaned
+        
 
+    def visit_For(self, node):
         if_is_present = (
             isinstance(node.body[0], ast.If)
         )
-
-        # condition_expr = node.body[0].test if if_is_present else None
 
         condition_expr = (
             node.body[0].test
             if node.body and isinstance(node.body[0], ast.If)
             else None
         )
-
+        
+        # Get the iterator variable
+        iterator_var = ast.unparse(node.target)
+        
+        # Get the raw condition
+        raw_condition = ast.unparse(condition_expr) if condition_expr else None
+        
+        # Clean the condition by removing iterator references
+        cleaned_condition = self.clean_condition_string(raw_condition, iterator_var)
+        
         loop_info = {
             "type": "for_loop",
-            "target": ast.unparse(node.target),
+            "target": iterator_var,
             "iterable": ast.unparse(node.iter),
             "if_is_present": if_is_present,
-            "condition_raw": ast.unparse(condition_expr) if condition_expr else None,
-            "conditions": convert_to_mongo_query(self.extract_condition_structure(condition_expr) if condition_expr else None),
+            "condition_raw": raw_condition,
+            "conditions": convert_to_mongo_query(cleaned_condition),  # This will now be ['Rating>4.5 or Rating==5']
             "body_size": len(node.body)
         }
 
-
         self.results.append(loop_info)
         self.generic_visit(node)
+
+
 
     
     def visit_While(self, node):
