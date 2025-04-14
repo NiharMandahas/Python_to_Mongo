@@ -8,8 +8,8 @@ for obj in users:
     if obj["Rating"]> 4.5 or obj["Rating"]==5:
         print(obj)
    
-users.delete_one(["age>18 and age<30 or age!=25"])
-
+users.delete_one([{'name':'nihar','age':20, 'city':'Bengaluru'}])
+users.delete_one(['age>18 and age<30 or age!=25 and something=="nihar"'])
 users.delete_all(["age>18 and age<30 or age!=25 and something=='nihar'"])
 
 users.update_one(["age > 30 and key2==5"],["something = 100 , something_else='nihar' "])
