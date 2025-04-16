@@ -313,14 +313,15 @@ class MainVisitor:
             "method_calls": calls["method_calls"],
             "loops": loops
         }
+    
 
 
 # Print the AST for reference
-print(ast.dump(tree, indent=6))
+# print(ast.dump(tree, indent=6))
 
-# Use the visitors
-visitor = MainVisitor()
-results = visitor.visit(tree)
+# # Use the visitors
+# visitor = MainVisitor()
+# results = visitor.visit(tree)
 
-with open("results.json", "w") as f:
-    json.dump(results, f, indent=4)
+# with open("results.json", "w") as f:
+#     json.dump(results, f, indent=4)

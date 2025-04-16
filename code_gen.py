@@ -55,7 +55,9 @@ class CodeGenerator:
                 self.code+=f"printjson(db.{loop["iterable"]}.find({loop["conditions"]}).toArray());\n"
         
     def show_code(self):
-        print(self.code)
+        with open("output.txt", "w") as file:
+            file.write(self.code)
+        # print(self.code)
 
 
 
@@ -73,7 +75,7 @@ class MainGenerator(CodeGenerator):
         self.generate_drop_code()
         return self.code
 
-obj= MainGenerator()
-obj.generate_code()
-obj.show_code()
+# obj= MainGenerator()
+# obj.generate_code()
+# obj.show_code()
 

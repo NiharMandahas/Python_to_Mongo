@@ -128,10 +128,10 @@ class CustomLanguageSyntaxChecker:
         return method_calls
 
 # Example usage
-checker = CustomLanguageSyntaxChecker()
-errors = checker.check_syntax(code)
-if errors:
-    for error in errors:
-        print(error)
-else:
-    print("Syntax is valid!")
+# checker = CustomLanguageSyntaxChecker()
+# errors = checker.check_syntax(code)
+# if errors:
+#     for error in errors:
+#         print(error)
+# else:
+#     print("Syntax is valid!")
