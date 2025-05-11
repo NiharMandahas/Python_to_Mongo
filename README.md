@@ -126,7 +126,8 @@ db.dropDatabase();
 
 
 ## Flowchart
-![PyMongo Converter Flowchart](rescources/flowchart.png)
+<img src="resources/flowchart.png" alt="PyMongo Converter Flowchart" width="600" height="500">
+
 
 
 ## Installation
