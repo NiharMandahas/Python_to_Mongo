@@ -7,35 +7,29 @@ PyMongo Language
 5. Ready Mongo Code in a file that can be run in mongosh
 
 
-
-Python Like Code (Syntax Analyzer)-
-
-#Yet to be done
+Python Like Code (Syntax Analyzer)
 
 
-Parser(JSON)- 
-
-Almost complete, nothing is pending.
+Parser(JSON)
 
 
 Code generation-
     Basic-
 
-    1. create DB               done
-    2. create table            done   
-    3. delete table            done
-    4. delete db               done
+    1. create DB               
+    2. create table               
+    3. delete table            
+    4. delete db               
 
-    5. insert_one              done
-    6. insert_many             done
+    5. insert_one              
+    6. insert_many             
+    7. update_one              
+    8. update_all              
 
-    7. update_one              done
-    8. update_all              done
+    9. delete_one              
+    10. delete_all                  
 
-    9. delete_one              done
-    10. delete_all              done    
-
-    11. find                    done
+    11. find                    
 
 
     Additional-
