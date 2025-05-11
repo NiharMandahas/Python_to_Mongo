@@ -124,6 +124,11 @@ db.users.drop();
 db.dropDatabase();
 ```
 
+
+## Flowchart
+![PyMongo Converter Flowchart](rescources/flowchart.png)
+
+
 ## Installation
 
 ```bash
@@ -152,6 +157,3 @@ print(mongodb_code)
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
