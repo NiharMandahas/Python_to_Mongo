@@ -126,7 +126,7 @@ db.dropDatabase();
 
 
 ## Flowchart
-<img src="resources/flowchart.png" alt="PyMongo Converter Flowchart" width="600" height="500">
+<img src="resources/flowchart.png" alt="PyMongo Converter Flowchart" width="900" height="500">
 
 
 
