@@ -1,6 +1,6 @@
 db.createCollection("name_me");
 db.name_me.insertOne({"name":"Alice"});
-db.name_me.insertMany([{"name":"AA"},{"seomthing":"sfiqnf"}]);
+db.name_me.insertMany([{"name":"AA"},{"name2":"value2"}]);
 
 printjson(db.name_me.find().toArray());
 

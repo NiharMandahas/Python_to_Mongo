@@ -2,11 +2,11 @@ use myDB
 db.createCollection('users');
 db.users.insertOne({'key': 'value', 'age': 324});
 db.users.insertMany([{'key1': 'value1'}, {'key2': 'value2'}]);
-db.users.updateOne({'$and': [{'age': {'$gt': 30}}, {'key2': 5}]}, {'$set': {'something': 100, 'something_else': 'nihar'}});
-db.users.updateMany({'$and': [{'age': {'$gt': 30}}, {'key2': 5}]}, {'$set': {'something': 100}});
-db.users.deleteOne({'name': 'nihar', 'age': 20, 'city': 'Bengaluru'});
-db.users.deleteOne({'$or': [{'$and': [{'age': {'$gt': 18}}, {'age': {'$lt': 30}}]}, {'$and': [{'age': {'$ne': 25}}, {'something': 'nihar'}]}]});
-db.users.deleteMany({'$or': [{'$and': [{'age': {'$gt': 18}}, {'age': {'$lt': 30}}]}, {'$and': [{'age': {'$ne': 25}}, {'something': 'nihar'}]}]});
+db.users.updateOne({'$and': [{'age': {'$gt': 30}}, {'key2': 5}]}, {'$set': {'condition1': 100, 'condition2': 'value2'}});
+db.users.updateMany({'$and': [{'age': {'$gt': 30}}, {'key2': 5}]}, {'$set': {'condition': 100}});
+db.users.deleteOne({'name': 'Alice', 'age': 20, 'city': 'New York'});
+db.users.deleteOne({'$or': [{'$and': [{'age': {'$gt': 18}}, {'age': {'$lt': 30}}]}, {'$and': [{'age': {'$ne': 25}}, {'condition2': 'value2'}]}]});
+db.users.deleteMany({'$or': [{'$and': [{'age': {'$gt': 18}}, {'age': {'$lt': 30}}]}, {'$and': [{'age': {'$ne': 25}}, {'condition3': 'value3'}]}]});
 printjson(db.users.find({'$or': [{'rating': {'$gt': 4.5}}, {'rating': 5}]}).toArray());
 db.users.drop();
 db.dropDatabase();
